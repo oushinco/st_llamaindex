@@ -1,6 +1,6 @@
 # Start from a CUDA-enabled base image
-FROM nvidia/cuda:11.0-base
-
+# FROM nvidia/cuda:11.0-base
+FROM azimuth/nvcr.io/nvidia/cuda:12.3.1-base-ubi8
 # Set a working directory
 WORKDIR /app
 
