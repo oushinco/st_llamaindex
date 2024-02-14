@@ -7,12 +7,12 @@ WORKDIR /app
 # Set the Transformers cache directory to /app/cache (or any other writable path)
 ENV TRANSFORMERS_CACHE /tmp/cache
 
-# Install system dependencies required for building C/C++ extensions
-RUN apt-get update && apt-get install -y \
-    build-essential \  # Includes GCC/G++ compilers
-    cmake \            # CMake for building C/C++ extensions
-    # git \              # Git, in case your dependencies need to fetch code
-    && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
+# # Install system dependencies required for building C/C++ extensions
+# RUN apt-get update && apt-get install -y \
+#     build-essential \  # Includes GCC/G++ compilers
+#     cmake \            # CMake for building C/C++ extensions
+#     # git \              # Git, in case your dependencies need to fetch code
+#     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
 
 
 
@@ -55,4 +55,5 @@ RUN chmod -R 777 /tmp
 EXPOSE 40000
 
 # Run the start_service.sh script or your application's entry point
-CMD ["./start_service.sh"]
+# CMD ["./start_service.sh"]
+CMD ["./start_service_test.sh"]
