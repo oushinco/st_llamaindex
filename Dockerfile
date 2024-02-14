@@ -18,9 +18,9 @@ ENV TRANSFORMERS_CACHE /tmp/cache
 # # Copy the local Debian packages
 # COPY ./packages/*.deb /tmp/packages/
 
-# # Install the Debian packages
-# RUN dpkg -i /tmp/packages/*.deb || apt-get update && apt-get install -yf && \
-#     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/packages
+# Install the Debian packages
+RUN dpkg -i /tmp/packages/*.deb || apt-get update && apt-get install -yf && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/packages
 
 
 # Copy the requirements.txt file into the container
@@ -31,7 +31,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Install poetry (Python package manager)
 # RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir --verbose
-RUN pip install llama-cpp-python
+# RUN pip install llama-cpp-python
 
 
 # Copy the rest of the application code into the container
