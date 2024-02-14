@@ -14,7 +14,7 @@ ENV TRANSFORMERS_CACHE /tmp/cache
 #     # git \              # Git, in case your dependencies need to fetch code
 #     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
 
-RUN mkdir /tmp/cache && chmod -R 777 /tmp/cache
+RUN mkdir /tmp/packages && chmod -R 777 /tmp/packages
 
 # Copy the local Debian packages
 COPY ./packages/*.deb /tmp/packages/
