@@ -15,12 +15,12 @@ ENV TRANSFORMERS_CACHE /tmp/cache
 #     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
 
 
-# Install system dependencies required for building C/C++ extensions
-RUN apt-get install -y \
-    build-essential \  # Includes GCC/G++ compilers
-    cmake \            # CMake for building C/C++ extensions
-    # git \              # Git, in case your dependencies need to fetch code
-    && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
+# Copy the local Debian packages
+COPY ./packages/*.deb /tmp/packages/
+
+# Install the Debian packages
+RUN dpkg -i /tmp/packages/*.deb || apt-get update && apt-get install -yf && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/packages
 
 
 # Copy the requirements.txt file into the container
