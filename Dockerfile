@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM docker.io/library/python:3.9-slim
 
 # Set the working directory in the container
 WORKDIR /app
@@ -7,21 +7,22 @@ WORKDIR /app
 # Set the Transformers cache directory to /app/cache (or any other writable path)
 ENV TRANSFORMERS_CACHE /tmp/cache
 
-# # Install system dependencies required for building C/C++ extensions
-# RUN apt-get update && apt-get install -y \
-#     build-essential \  # Includes GCC/G++ compilers
-#     cmake \            # CMake for building C/C++ extensions
-#     # git \              # Git, in case your dependencies need to fetch code
-#     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
+# Install system dependencies required for building C/C++ extensions
+RUN apt-get update && apt-get install -y \
+    build-essential \  # Includes GCC/G++ compilers
+    cmake \            # CMake for building C/C++ extensions
+    # git \              # Git, in case your dependencies need to fetch code
+    && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
 
-RUN mkdir /tmp/packages && chmod -R 777 /tmp/packages
 
-# Copy the local Debian packages
-COPY ./packages/*.deb /tmp/packages/
 
-# Install the Debian packages
-RUN dpkg -i /tmp/packages/*.deb || apt-get update && apt-get install -yf && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/packages
+# # Copy the local Debian packages
+# RUN mkdir /tmp/packages && chmod -R 777 /tmp/packages
+# COPY ./packages/*.deb /tmp/packages/
+
+# # Install the Debian packages
+# RUN dpkg -i /tmp/packages/*.deb || apt-get update && apt-get install -yf && \
+#     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/packages
 
 
 # Copy the requirements.txt file into the container
@@ -31,8 +32,8 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install poetry (Python package manager)
-# RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir --verbose
-RUN pip install llama-cpp-python
+RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir --verbose
+# RUN pip install llama-cpp-python
 
 
 # Copy the rest of the application code into the container
