@@ -1,5 +1,5 @@
 # Start from a CUDA-enabled base image
-FROM nvidia/cuda:12.1-base
+FROM nvidia/cuda:11.0-base
 
 # Set a working directory
 WORKDIR /app
