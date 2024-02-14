@@ -1,55 +1,50 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+# Start from a CUDA-enabled base image
+FROM nvidia/cuda:12.1-base
 
-# Set the working directory in the container
+# Set a working directory
 WORKDIR /app
 
-# Set the Transformers cache directory to /app/cache (or any other writable path)
-ENV TRANSFORMERS_CACHE /tmp/cache
+# Install Python, pip and necessary build tools
+RUN apt-get update && apt-get install -y \
+    python3.9 \
+    python3-pip \
+    python3-dev \
+    build-essential \
+    cmake \
+    git \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# # Install system dependencies required for building C/C++ extensions
-# RUN apt-get update && apt-get install -y \
-#     build-essential \  # Includes GCC/G++ compilers
-#     cmake \            # CMake for building C/C++ extensions
-#     # git \              # Git, in case your dependencies need to fetch code
-#     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
+# Set Python 3.9 as the default python version
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
 
+# Set environment variables to ensure Python outputs are sent straight to terminal without being first buffered
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Copy the local Debian packages
-COPY ./packages/*.deb /tmp/packages/
+# Optionally, set the Transformers cache directory
+ENV TRANSFORMERS_CACHE /app/cache
 
-# Install the Debian packages
-RUN dpkg -i /tmp/packages/*.deb || apt-get update && apt-get install -yf && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/packages
+# Set environment variables for cmake to enable CUDA/cuBLAS
+ENV CMAKE_ARGS="-DLLAMA_CUBLAS=on"
+ENV FORCE_CMAKE=1
 
+# Upgrade pip to its latest version
+RUN pip install --no-cache-dir --upgrade pip
 
 # Copy the requirements.txt file into the container
 COPY requirements.txt ./
 
-# Install project dependencies from requirements.txt
+# Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install poetry (Python package manager)
-RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir --verbose
-
+# Install llama-cpp-python with verbose output for troubleshooting
+RUN pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir --verbose
 
 # Copy the rest of the application code into the container
 COPY . .
 
-# Change ownership and permissions of the /app directory
-RUN chmod -R 777 /app
-
-# Set permissions for specific directories (adjust as needed)
-RUN chmod -R 777 /tmp
-
-# Copy the script to /tmp
-# COPY start_service.sh /tmp/start_service.sh
-
-# Make the start_service.sh script executable if needed
-# RUN chmod +x start_service.sh
-
-# Expose the port on which your service runs (7860)
+# Expose the port your app runs on
 EXPOSE 40000
 
-# Run the start_service.sh script or your application's entry point
-CMD ["./start_service.sh"]
+# Command to run your application
+CMD ["python", "your_application.py"]
