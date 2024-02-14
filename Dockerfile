@@ -7,12 +7,21 @@ WORKDIR /app
 # Set the Transformers cache directory to /app/cache (or any other writable path)
 ENV TRANSFORMERS_CACHE /tmp/cache
 
+# # Install system dependencies required for building C/C++ extensions
+# RUN apt-get update && apt-get install -y \
+#     build-essential \  # Includes GCC/G++ compilers
+#     cmake \            # CMake for building C/C++ extensions
+#     # git \              # Git, in case your dependencies need to fetch code
+#     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
+
+
 # Install system dependencies required for building C/C++ extensions
-RUN apt-get update && apt-get install -y \
-    # build-essential \  # Includes GCC/G++ compilers
+RUN apt-get install -y \
+    build-essential \  # Includes GCC/G++ compilers
     cmake \            # CMake for building C/C++ extensions
     # git \              # Git, in case your dependencies need to fetch code
     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
+
 
 # Copy the requirements.txt file into the container
 COPY requirements.txt ./
