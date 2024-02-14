@@ -9,9 +9,9 @@ ENV TRANSFORMERS_CACHE /tmp/cache
 
 # Install system dependencies required for building C/C++ extensions
 RUN apt-get update && apt-get install -y \
-    build-essential \  # Includes GCC/G++ compilers
+    # build-essential \  # Includes GCC/G++ compilers
     cmake \            # CMake for building C/C++ extensions
-    git \              # Git, in case your dependencies need to fetch code
+    # git \              # Git, in case your dependencies need to fetch code
     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
 
 # Copy the requirements.txt file into the container
