@@ -64,6 +64,13 @@ os.environ['no_proxy'] = 'ppldsa02ui.police.nsw.gov.au, 10.1.120.194, 10.17.161.
 df_ori = pd.read_csv(r'MB_narr.csv')
 
 
+
+
+
+    
+    
+    
+
 # Sample JSON data
 data_json = """
 {
@@ -455,7 +462,15 @@ def show_table(data_json):
 
 def main():
     st.title("AI Based Entity Extractor")
-    
+    # File uploader widget
+    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+    if uploaded_file is not None:
+        # Read the CSV file into a Pandas dataframe
+        df = pd.read_csv(uploaded_file)
+      
+        # Display the dataframe
+        st.write(df)
+        
     user_choice = st.radio(
         "Here is an EagleI narrative:",
         ("I'm Feeling Lucky", "I want to write my own"),
@@ -541,6 +556,10 @@ def main():
                 st.markdown("### Table")
                 st.markdown("---")
                 show_table(result_json)
+
+
+
+
 
 if __name__ == "__main__":
     main()
