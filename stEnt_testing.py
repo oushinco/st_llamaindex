@@ -549,11 +549,13 @@ def main():
     if uploaded_file is not None:
         # Read the CSV file into a Pandas dataframe
         df = pd.read_csv(uploaded_file)
+        
                     
         row_number = st.number_input('Enter row number', min_value=1, max_value=len(df), value=1) - 1  # Adjust for zero indexing
          # Input for specifying the JSON column name, assuming you might not know it beforehand
         json_column = st.text_input('Enter JSON column name', value='json')
-             
+        
+        df_sub = df.iloc[row_number, :]     
    
         if st.button("Show json"):
             
@@ -675,7 +677,7 @@ def main():
                 st.markdown("### Table")
                 st.markdown("---")
                 # show_table(result_json)
-                entities_df, relationships_df = get_tables(df)
+                entities_df, relationships_df = get_tables(df_sub)
                 show_table_csv(entities_df, relationships_df)
 
 
