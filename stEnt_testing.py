@@ -479,7 +479,9 @@ def main():
             if json_column in df.columns:
                 try:
                     json_string = df.at[row_number, json_column]
-                    result_json = json.loads(json_string)
+                    # result_json = json.loads(json_string)
+                    result_json = json_string
+
                     the_prompt = 'testing prompt'
                     the_response = df.at[row_number, 'Ent_out']
                     st.session_state['result_json'] = result_json
