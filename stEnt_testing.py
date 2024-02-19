@@ -674,7 +674,9 @@ def main():
             with st.container():
                 st.markdown("### Table")
                 st.markdown("---")
-                show_table_csv(result_json)
+                # show_table(result_json)
+                entities_df, relationships_df = get_tables(df)
+                show_table_csv(entities_df, relationships_df)
 
 
 
