@@ -467,57 +467,82 @@ def main():
     if uploaded_file is not None:
         # Read the CSV file into a Pandas dataframe
         df = pd.read_csv(uploaded_file)
-      
-        # Display the dataframe
-        st.write(df)
+                    
+        row_number = st.number_input('Enter row number', min_value=1, max_value=len(df), value=1) - 1  # Adjust for zero indexing
+         # Input for specifying the JSON column name, assuming you might not know it beforehand
+        json_column = st.text_input('Enter JSON column name', value='json')
+             
+   
+        if st.button("Show json"):
+            
+            if json_column in df.columns:
+                try:
+                    json_string = df.at[row_number, json_column]
+                    result_json = json.loads(json_string)
+                    the_prompt = 'testing prompt'
+                    the_response = df.at[row_number, 'Ent_out']
+                    st.session_state['result_json'] = result_json
+                    st.session_state['the_prompt'] = the_prompt
+                    st.session_state['the_response'] = the_response
+                    
+                    
+                except KeyError:
+                    st.error(f"Row number {row_number + 1} is out of range.")
+                except Exception as e:
+                    st.error(f"Error extracting JSON: {str(e)}")
+            else:
+                st.error("Column name not found. Please check the column name.")
+            
+             
         
-    user_choice = st.radio(
-        "Here is an EagleI narrative:",
-        ("I'm Feeling Lucky", "I want to write my own"),
-        horizontal=True
-    )
-
-    if user_choice == "I'm Feeling Lucky":
-        if 'lucky_text' not in st.session_state or st.session_state['user_choice'] != user_choice:
-            # Select a new random narrative
-            st.session_state['lucky_text'] = df_ori['text'][random.randint(0, len(df_ori) - 1)]
-        st.session_state['user_input'] = st.text_area("The Narrative:", height=200, value=st.session_state['lucky_text'])
     else:
-        # Provide a text area for user input if not feeling lucky or to preserve user's manual input
-        if 'user_choice' not in st.session_state or st.session_state['user_choice'] != user_choice:
-            st.session_state['user_input'] = ""
-        st.session_state['user_input'] = st.text_area("The Narrative:", height=200, value=st.session_state['user_input'])
+        user_choice = st.radio(
+            "Here is an EagleI narrative:",
+            ("I'm Feeling Lucky", "I want to write my own"),
+            horizontal=True
+        )
 
-    # Update the user choice in session state to detect changes
-    st.session_state['user_choice'] = user_choice
-
-    user_input = st.session_state['user_input']
-    
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        show_prompt_checkbox = st.checkbox("Show Prompt", value=True)
-    with col2:
-        show_response_checkbox = st.checkbox("Show Response", value=True)
-    with col3:
-        show_json_checkbox = st.checkbox("Show JSON", value=True)
-    with col4:
-        show_text_checkbox = st.checkbox("Show Text", value=True)
-    with col5:
-        show_table_checkbox = st.checkbox("Show Table", value=True)
-        
-
-    if st.button("Process the above text"):
-        if user_input:
-            with st.spinner('Processing your text, please wait...'):
-                # result_json, the_prompt, the_response = process_text_llama_index(user_input)
-                result_json = data_json
-                the_prompt = 'testing prompt'
-                the_response = 'testing response'
-                st.session_state['result_json'] = result_json
-                st.session_state['the_prompt'] = the_prompt
-                st.session_state['the_response'] = the_response
+        if user_choice == "I'm Feeling Lucky":
+            if 'lucky_text' not in st.session_state or st.session_state['user_choice'] != user_choice:
+                # Select a new random narrative
+                st.session_state['lucky_text'] = df_ori['text'][random.randint(0, len(df_ori) - 1)]
+            st.session_state['user_input'] = st.text_area("The Narrative:", height=200, value=st.session_state['lucky_text'])
         else:
-            st.error("Please enter some text to process.")
+            # Provide a text area for user input if not feeling lucky or to preserve user's manual input
+            if 'user_choice' not in st.session_state or st.session_state['user_choice'] != user_choice:
+                st.session_state['user_input'] = ""
+            st.session_state['user_input'] = st.text_area("The Narrative:", height=200, value=st.session_state['user_input'])
+
+        # Update the user choice in session state to detect changes
+        st.session_state['user_choice'] = user_choice
+
+        user_input = st.session_state['user_input']
+        
+        col1, col2, col3, col4, col5 = st.columns(5)
+        with col1:
+            show_prompt_checkbox = st.checkbox("Show Prompt", value=True)
+        with col2:
+            show_response_checkbox = st.checkbox("Show Response", value=True)
+        with col3:
+            show_json_checkbox = st.checkbox("Show JSON", value=True)
+        with col4:
+            show_text_checkbox = st.checkbox("Show Text", value=True)
+        with col5:
+            show_table_checkbox = st.checkbox("Show Table", value=True)
+            
+
+        if st.button("Process the above text"):
+            if user_input:
+                with st.spinner('Processing your text, please wait...'):
+                    # result_json, the_prompt, the_response = process_text_llama_index(user_input)
+                    result_json = data_json
+                    the_prompt = 'testing prompt'
+                    the_response = 'testing response'
+                    st.session_state['result_json'] = result_json
+                    st.session_state['the_prompt'] = the_prompt
+                    st.session_state['the_response'] = the_response
+            else:
+                st.error("Please enter some text to process.")
     
     
    
