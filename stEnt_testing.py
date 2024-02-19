@@ -555,7 +555,7 @@ def main():
          # Input for specifying the JSON column name, assuming you might not know it beforehand
         json_column = st.text_input('Enter JSON column name', value='json')
         
-        df_sub = df.iloc[row_number, :]     
+        df_sub = df.iloc[[row_number]]  
    
         if st.button("Show json"):
             
