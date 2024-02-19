@@ -453,6 +453,89 @@ def show_table(data_json):
     else:
         st.table(relationships_df[['source_name', 'relation_type', 'target_name']])
     
+def get_tables(df):
+
+
+    # entity_columns = ['id', 'name', 'type', 'titles', 'age', 'nickname', 'narrative_id', 'narrative_text', 'error_message']
+    # relationship_columns = ['source_id', 'target_id', 'source', 'target', 'relation_type', 'relation_date', 'narrative_id', 'narrative_text', 'error_message']
+    entity_columns = ['name', 'type', 'titles', 'age', 'nickname', 'ProductID', 'InvestigationID', 'narrative_text', 'error_message']
+    relationship_columns = ['source', 'target', 'relation_type', 'relation_date', 'ProductID', 'InvestigationID', 'narrative_text', 'error_message']
+
+
+    # Initialize lists to collect data for each DataFrame
+    all_entities = []
+    all_relationships = []
+
+    # Loop through each row in your DataFrame
+    for index, row in df.iterrows():
+        narrative_text = row['Ori_Narr']
+        # narrative_id = f"{row['ProductID']}-{row['InvestigationID']}"  # Creating a unique identifier
+        ProductID = row['ProductID']
+        InvestigationID = row['InvestigationID']
+
+        # Attempt to parse the JSON, handle empty or malformed JSON
+        try:
+            json_data = json.loads(row['json']) if isinstance(row['json'], str) and not pd.isna(row['json']) else {}
+        except (json.JSONDecodeError, TypeError):
+            json_data = {}
+
+        # Process entities
+        if 'entities' in json_data and isinstance(json_data['entities'], list):
+            for entity in json_data['entities']:
+                if isinstance(entity, dict):
+                    # Use dict comprehension to only include expected columns, add narrative and error columns
+                    entity_data = {col: entity.get(col) for col in entity_columns[:-2]}  # Exclude narrative_text and error_message
+                    entity_data.update({'ProductID': ProductID, 'InvestigationID': InvestigationID, 'narrative_text': narrative_text, 'error_message': None})
+                    # entity_data.update({'narrative_id': narrative_id, 'narrative_text': narrative_text, 'error_message': None})
+                    all_entities.append(entity_data)
+                else:
+                    # Handle unexpected entity format
+                    all_entities.append({col: None for col in entity_columns})
+                    all_entities[-1].update({'ProductID': ProductID, 'InvestigationID': InvestigationID, 'error_message': f"Unexpected entity format at row {index}"})
+        else:
+            # Handle missing or non-list 'entities'
+            all_entities.append({col: None for col in entity_columns})
+            all_entities[-1].update({'ProductID': ProductID, 'InvestigationID': InvestigationID, 'error_message': f"No entities found or invalid format at row {index}"})
+
+        # Process relationships
+        if 'relationships' in json_data and isinstance(json_data['relationships'], list):
+            for relationship in json_data['relationships']:
+                if isinstance(relationship, dict):
+                    # Use dict comprehension to only include expected columns, add narrative and error columns
+                    relationship_data = {col: relationship.get(col) for col in relationship_columns[:-2]}  # Exclude narrative_text and error_message
+                    relationship_data.update({'ProductID': ProductID, 'InvestigationID': InvestigationID, 'narrative_text': narrative_text, 'error_message': None})
+                    all_relationships.append(relationship_data)
+                else:
+                    # Handle unexpected relationship format
+                    all_relationships.append({col: None for col in relationship_columns})
+                    all_relationships[-1].update({'ProductID': ProductID, 'InvestigationID': InvestigationID, 'error_message': f"Unexpected relationship format at row {index}"})
+        else:
+            # Handle missing or non-list 'relationships'
+            all_relationships.append({col: None for col in relationship_columns})
+            all_relationships[-1].update({'ProductID': ProductID, 'InvestigationID': InvestigationID, 'error_message': f"No relationships found or invalid format at row {index}"})
+
+    # Create DataFrames with predefined columns to ensure consistency
+    entities_df = pd.DataFrame(all_entities, columns=entity_columns)
+    relationships_df = pd.DataFrame(all_relationships, columns=relationship_columns)
+    
+    return entities_df, relationships_df
+
+def show_table_csv(entities_df, relationships_df):
+    
+  
+    st.title("JSON Data Display")
+
+    st.header("Entities")
+    st.table(entities_df)
+
+    st.header("Relationships")
+
+    if 'relation_date' in relationships_df.columns:
+        st.table(relationships_df[['source', 'relation_type', 'target', 'relation_date']])
+    else:
+        st.table(relationships_df[['source', 'relation_type', 'target']])
+
+
 
 
 
@@ -591,7 +674,7 @@ def main():
             with st.container():
                 st.markdown("### Table")
                 st.markdown("---")
-                show_table(result_json)
+                show_table_csv(result_json)
 
 
 
