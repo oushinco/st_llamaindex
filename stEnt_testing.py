@@ -384,17 +384,14 @@ def display_relationship(relationship, entities):
         print("One or both of the entities in this relationship were not found.")
         
         
-# def display_relationship(relationship, entities):
-#     source = highlight_rel(entities[relationship['source']-1]['name'])
-#     target = highlight_rel(entities[relationship['target']-1]['name'])
-#     relation_type = highlight_rel(relationship['relation_type'])
+def display_relationship_csv(relationship):
     
-#     if 'relation_date' in relationship and relationship['relation_date']:
-#         relation_info = f"{source} has a {relation_type} relationship with {target} since {relationship['relation_date']}."
-#     else:
-#         relation_info = f"{source} has a {relation_type} relationship with {target}."
+    if 'relation_date' in relationship and relationship['relation_date']:
+        relation_info = f"{relationship['source']} has a {relationship['relation_type']} relationship with {relationship['target']} since {relationship['relation_date']}."
+    else:
+        relation_info = f"{relationship['source']} has a {relationship['relation_type']} relationship with {relationship['target']}."
 
-#     st.markdown(relation_info, unsafe_allow_html=True)
+    st.markdown(relation_info, unsafe_allow_html=True)
 
 
 
@@ -426,7 +423,8 @@ def show_text(data_json):
 
     st.header("Relationships")
     for relationship in relationships:
-        display_relationship(relationship, entities)
+        # display_relationship(relationship, entities)
+        display_relationship_csv(relationship)
 
 
 def show_table(data_json):
@@ -482,7 +480,7 @@ def main():
                     # result_json = json.loads(json_string)
                     result_json = json_string
 
-                    the_prompt = 'testing prompt'
+                    the_prompt = df.at[row_number, 'Ori_Narr']
                     the_response = df.at[row_number, 'Ent_out']
                     st.session_state['result_json'] = result_json
                     st.session_state['the_prompt'] = the_prompt
