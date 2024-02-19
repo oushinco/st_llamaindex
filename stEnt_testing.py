@@ -464,6 +464,7 @@ def main():
     st.title("AI Based Entity Extractor")
     # File uploader widget
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+    
     if uploaded_file is not None:
         # Read the CSV file into a Pandas dataframe
         df = pd.read_csv(uploaded_file)
@@ -518,17 +519,17 @@ def main():
 
         user_input = st.session_state['user_input']
         
-        col1, col2, col3, col4, col5 = st.columns(5)
-        with col1:
-            show_prompt_checkbox = st.checkbox("Show Prompt", value=True)
-        with col2:
-            show_response_checkbox = st.checkbox("Show Response", value=True)
-        with col3:
-            show_json_checkbox = st.checkbox("Show JSON", value=True)
-        with col4:
-            show_text_checkbox = st.checkbox("Show Text", value=True)
-        with col5:
-            show_table_checkbox = st.checkbox("Show Table", value=True)
+        # col1, col2, col3, col4, col5 = st.columns(5)
+        # with col1:
+        #     show_prompt_checkbox = st.checkbox("Show Prompt", value=True)
+        # with col2:
+        #     show_response_checkbox = st.checkbox("Show Response", value=True)
+        # with col3:
+        #     show_json_checkbox = st.checkbox("Show JSON", value=True)
+        # with col4:
+        #     show_text_checkbox = st.checkbox("Show Text", value=True)
+        # with col5:
+        #     show_table_checkbox = st.checkbox("Show Table", value=True)
             
 
         if st.button("Process the above text"):
@@ -544,7 +545,17 @@ def main():
             else:
                 st.error("Please enter some text to process.")
     
-    
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        show_prompt_checkbox = st.checkbox("Show Prompt", value=True)
+    with col2:
+        show_response_checkbox = st.checkbox("Show Response", value=True)
+    with col3:
+        show_json_checkbox = st.checkbox("Show JSON", value=True)
+    with col4:
+        show_text_checkbox = st.checkbox("Show Text", value=True)
+    with col5:
+        show_table_checkbox = st.checkbox("Show Table", value=True)
    
     # Display results if available
     if 'result_json' in st.session_state:
