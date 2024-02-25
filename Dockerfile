@@ -7,6 +7,8 @@ WORKDIR /app
 # Set the Transformers cache directory to /app/cache (or any other writable path)
 ENV TRANSFORMERS_CACHE /tmp/cache
 
+RUN cat /etc/resolv.conf
+
 # # Install system dependencies required for building C/C++ extensions
 RUN apt-get update && apt-get install -y \
     build-essential \  # Includes GCC/G++ compilers
