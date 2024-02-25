@@ -8,11 +8,11 @@ WORKDIR /app
 ENV TRANSFORMERS_CACHE /tmp/cache
 
 # # Install system dependencies required for building C/C++ extensions
-# RUN apt-get update && apt-get install -y \
-#     build-essential \  # Includes GCC/G++ compilers
-#     cmake \            # CMake for building C/C++ extensions
-#     # git \              # Git, in case your dependencies need to fetch code
-#     && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
+RUN apt-get update && apt-get install -y \
+    build-essential \  # Includes GCC/G++ compilers
+    cmake \            # CMake for building C/C++ extensions
+    # git \              # Git, in case your dependencies need to fetch code
+    && apt-get clean && rm -rf /var/lib/apt/lists/*  # Clean up
 
 
 
@@ -32,7 +32,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install poetry (Python package manager)
-# RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir --verbose
+RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip install llama-cpp-python --force-reinstall --upgrade --no-cache-dir --verbose
 # RUN pip install llama-cpp-python
 
 
@@ -56,4 +56,4 @@ EXPOSE 40000
 
 # Run the start_service.sh script or your application's entry point
 # CMD ["./start_service.sh"]
-CMD ["./start_service_test.sh"]
+CMD ["./start_service.sh"]
